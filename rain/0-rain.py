@@ -1,39 +1,30 @@
 #!/usr/bin/python3
-"""
-doc
-"""
+"""Check readme for full description"""
 
 
-def rain(walls: list) -> int:
-    """
-    >>> walls = [0,1,0,2,1,0,1,3,2,1,2,1]
-    >>> print(rain(walls))
-    6
-    >>> walls = [0, 1, 0, 2, 0, 3, 0, 4]
-    >>> print(rain(walls))
-    6
-    >>> walls = [2, 0, 0, 4, 0, 0, 1, 0]
-    >>> print(rain(walls))
-    6
-    """
+def rain(walls):
+    """Rain function"""
+    water_retained = 0
 
-    if not walls or walls == []:
-        return 0
-    if len(walls) < 3:
+    if not isinstance(walls, list) or len(walls) < 3:
         return 0
 
-    max_area = 0
+    # The left and right max at each index
+    length = len(walls)
+    left, right = [[0]*length, [0]*length]
+
+    # Compute the values of the those maxes
+    left[0] = walls[0]
+    for i in range(1, length):
+        left[i] = max(left[i-1], walls[i])
+
+    right[length-1] = walls[length-1]
+    for i in range(length-2, -1, -1):
+        right[i] = max(right[i + 1], walls[i])
+
+    # Compute the water retained at each index
+    # using the min of the left and right max
     for i in range(len(walls)):
-        max_left = max(walls[0:i + 1])
-        max_right = max(walls[i:])
-        area = min(max_left, max_right) - walls[i]
-        if area < 0:
-            area == 0
-        max_area += area
-    return max_area
+        water_retained += min(left[i], right[i]) - walls[i]
 
-
-"""
-time complexity O(n^2)
-space complexity O(1)
-"""
+    return water_retained
